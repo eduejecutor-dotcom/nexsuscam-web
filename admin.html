@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Nexus Cam · Conversaciones</title>
+<link rel="icon" type="image/png" href="assets/nx-icono.png">
+<style>
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f1ee;color:#1d2124}
+header{background:#22262a;color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px}
+header img{width:40px;height:40px;border-radius:50%;background:#fff}
+header b{font-size:19px}
+main{max-width:900px;margin:0 auto;padding:18px}
+.card{background:#fff;border:1px solid #e4e2de;border-radius:14px;padding:16px;margin-bottom:14px}
+label{font-weight:600;font-size:14px;display:block;margin-bottom:6px}
+input,select,button{font:16px system-ui,sans-serif;min-height:46px;border-radius:10px}
+input,select{border:1px solid #d3d1cc;padding:10px 12px;width:100%;background:#fff}
+button{border:0;background:#0070e0;color:#fff;font-weight:700;padding:0 18px;cursor:pointer}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1 1 180px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:#fff;border:1px solid #e4e2de;border-radius:14px;padding:14px}
+.stat b{display:block;font-size:30px;line-height:1.1}
+.stat span{color:#4f565c;font-size:14px}
+h2{font-size:20px;margin:22px 0 10px}
+.conv{background:#fff;border:1px solid #e4e2de;border-radius:14px;margin-bottom:12px;overflow:hidden}
+.conv summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;flex-wrap:wrap;align-items:center;list-style:none}
+.conv summary::-webkit-details-marker{display:none}
+.tag{font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.t-wa{background:#d6f5e1;color:#126a33}.t-no{background:#fde4d6;color:#8a3b0e}
+.msgs{padding:4px 14px 14px;display:flex;flex-direction:column;gap:6px;border-top:1px solid #eee}
+.m{max-width:90%;padding:8px 11px;border-radius:12px;font-size:15px;white-space:pre-line}
+.m small{display:block;font-size:11px;opacity:.7}
+.u{background:#0070e0;color:#fff;align-self:flex-end}
+.b{background:#f3f1ee;align-self:flex-start}
+.e{align-self:center;font-size:13px;color:#8a3b0e;background:#fff4ec}
+ol{margin:0;padding-left:22px}
+.err{color:#b3261e;font-weight:600}
+.muted{color:#4f565c;font-size:14px}
+</style>
+</head>
+<body>
+<header><img src="assets/nx-icono.png" alt=""><b>Conversaciones del asistente</b></header>
+<main>
+<form class="card" id="f">
+<div class="row">
+<div><label for="k">Clave</label><input id="k" type="password" autocomplete="current-password" required></div>
+<div><label for="r">Periodo</label><select id="r"><option value="0">Hoy</option><option value="1">Ayer</option><option value="7">Últimos 7 días</option><option value="30">Últimos 30 días</option></select></div>
+<button type="submit">Ver</button>
+</div>
+<p class="muted" id="st" style="margin:10px 0 0">Ingresa tu clave para ver las conversaciones.</p>
+</form>
+<div id="out"></div>
+</main>
+<script>
+{
+const SB='https://thmxfulfyptlircotuek.supabase.co',SBK='sb_publishable_eEECOmXIRfzjqsttZSEE6Q_VpOKM6ue';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hm=d=>new Date(d).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+const dm=d=>new Date(d).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
+try{const k=sessionStorage.getItem('nx_admin');if(k)$('k').value=k}catch(e){}
+function range(v){const now=new Date(),start=new Date(now);start.setHours(0,0,0,0);let a,b;
+ if(v==='0'){a=start;b=new Date(start.getTime()+864e5)}else if(v==='1'){b=start;a=new Date(start.getTime()-864e5)}else{b=new Date(start.getTime()+864e5);a=new Date(b.getTime()-(+v)*864e5)}
+ return [a.toISOString(),b.toISOString()]}
+$('f').addEventListener('submit',async e=>{e.preventDefault();const key=$('k').value.trim();if(!key)return;
+ $('st').className='muted';$('st').textContent='Cargando…';$('out').innerHTML='';
+ const [a,b]=range($('r').value);
+ try{
+  const res=await fetch(SB+'/rest/v1/rpc/nexuscam_get_logs',{method:'POST',headers:{apikey:SBK,'Content-Type':'application/json'},body:JSON.stringify({p_key:key,p_since:a,p_until:b})});
+  if(!res.ok){$('st').className='err';$('st').textContent=res.status===401||res.status===400||res.status===403?'Clave incorrecta.':'No se pudo cargar ('+res.status+').';return}
+  try{sessionStorage.setItem('nx_admin',key)}catch(e){}
+  render(await res.json());
+ }catch(err){$('st').className='err';$('st').textContent='Sin conexión. Intenta de nuevo.'}
+});
+function render(rows){
+ const by={};rows.forEach(r=>{(by[r.session_id]=by[r.session_id]||[]).push(r)});
+ const convs=Object.values(by).filter(c=>c.some(r=>r.role==='user')).sort((x,y)=>new Date(y[0].created_at)-new Date(x[0].created_at));
+ const users=rows.filter(r=>r.role==='user');
+ const wa=convs.filter(c=>c.some(r=>r.role==='event'&&r.message.startsWith('click_whatsapp'))).length;
+ const no=rows.filter(r=>r.role==='event'&&r.message.startsWith('sin_respuesta'));
+ const freq={};users.forEach(r=>{const t=r.message.trim();freq[t]=(freq[t]||0)+1});
+ const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ $('st').textContent=convs.length?'':'No hubo conversaciones en este periodo.';
+ let h='<div class="stats"><div class="stat"><b>'+convs.length+'</b><span>Conversaciones</span></div><div class="stat"><b>'+users.length+'</b><span>Preguntas</span></div><div class="stat"><b>'+wa+'</b><span>Pasaron a WhatsApp</span></div><div class="stat"><b>'+no.length+'</b><span>Sin respuesta</span></div></div>';
+ if(no.length){h+='<h2>Preguntas que el asistente no supo responder</h2><div class="card"><ol>'+no.map(r=>'<li>'+esc(r.message.replace(/^sin_respuesta: /,''))+' <span class="muted">· '+dm(r.created_at)+' '+hm(r.created_at)+'</span></li>').join('')+'</ol></div>'}
+ if(top.length){h+='<h2>Lo más consultado</h2><div class="card"><ol>'+top.map(([t,n])=>'<li>'+esc(t)+' <span class="muted">· '+n+'</span></li>').join('')+'</ol></div>'}
+ if(convs.length){h+='<h2>Conversaciones</h2>'+convs.map(c=>{
+  const first=c.find(r=>r.role==='user');const isWa=c.some(r=>r.role==='event'&&r.message.startsWith('click_whatsapp'));const isNo=c.some(r=>r.role==='event'&&r.message.startsWith('sin_respuesta'));
+  return '<details class="conv"><summary><b>'+dm(c[0].created_at)+' '+hm(c[0].created_at)+'</b><span>'+esc(first.message.slice(0,60))+'</span>'+(isWa?'<span class="tag t-wa">Pasó a WhatsApp</span>':'')+(isNo?'<span class="tag t-no">Sin respuesta</span>':'')+'</summary><div class="msgs">'+
+  c.map(r=>r.role==='event'?'<div class="m e">'+(r.message.startsWith('click_whatsapp')?'Tocó “Hablar con Eduardo por WhatsApp”':'No supo responder')+'</div>':'<div class="m '+(r.role==='user'?'u':'b')+'"><small>'+hm(r.created_at)+'</small>'+esc(r.message)+'</div>').join('')+'</div></details>'}).join('')}
+ $('out').innerHTML=h;
+}
+}
+</script>
+</body>
+</html>
