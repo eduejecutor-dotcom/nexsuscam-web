@@ -489,6 +489,17 @@ update();
 .nx-in button{border:0;background:#0070e0;color:#fff;border-radius:12px;padding:0 16px;font:700 15px Barlow,system-ui,sans-serif;min-height:46px;cursor:pointer}
 #nxBot button:focus-visible,#nxBot input:focus-visible,#nxBot a:focus-visible{outline:3px solid #3d9bff;outline-offset:2px}
 @media(max-width:480px){#nxBtn span{display:none}#nxBtn{padding:0 11px}}
+
+#nxBtn{position:relative;border:2px solid #f5c542;animation:nxGlow 2.2s ease-in-out infinite}
+@keyframes nxGlow{0%,100%{box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 0 0 rgba(245,197,66,.75),0 0 14px 2px rgba(245,197,66,.55)}50%{box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 0 9px rgba(245,197,66,0),0 0 26px 8px rgba(255,214,90,.85)}}
+#nxBtn::after{content:"";position:absolute;inset:0;border-radius:30px;background:linear-gradient(110deg,transparent 30%,rgba(255,236,170,.55) 50%,transparent 70%);background-size:250% 100%;animation:nxShine 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes nxShine{0%{background-position:150% 0}60%,100%{background-position:-50% 0}}
+#nxTeaser{position:fixed;right:16px;bottom:86px;max-width:min(300px,calc(100vw - 32px));background:#fff;color:#1d2124;border:2px solid #f5c542;border-radius:16px;border-bottom-right-radius:4px;padding:12px 38px 12px 14px;box-shadow:0 12px 30px rgba(0,0,0,.25);font:600 15px/1.4 Barlow,system-ui,sans-serif;cursor:pointer;animation:nxPop .35s ease-out}
+#nxTeaser[hidden]{display:none}
+#nxTeaser b{display:block;font-size:16px;color:#0058b3}
+#nxTeaserX{position:absolute;top:2px;right:2px;background:none;border:0;font-size:22px;color:#6b7279;min-width:36px;min-height:36px;cursor:pointer}
+@keyframes nxPop{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#nxBtn,#nxBtn::after,#nxTeaser{animation:none}}
 </style>
 <div id="nxBot">
 <div id="nxPanel" hidden role="dialog" aria-label="Asistente Nexus Cam">
@@ -496,6 +507,7 @@ update();
 <div id="nxLog" aria-live="polite"></div>
 <form class="nx-in" id="nxForm"><input id="nxInput" placeholder="Escribe tu pregunta…" autocomplete="off" aria-label="Escribe tu pregunta"><button type="submit">Enviar</button></form>
 </div>
+<div id="nxTeaser" hidden role="button" tabindex="0" aria-label="Abrir asistente"><b>¡Hola! Soy el asistente de Nexus Cam 👋</b>¿Te ayudo con precios, instalación o qué cámara te conviene?<button type="button" id="nxTeaserX" aria-label="Cerrar saludo">×</button></div>
 <button id="nxBtn" aria-expanded="false" aria-controls="nxPanel"><img src="assets/nx-icono.png" alt=""><span>¿Dudas? Pregúntame</span></button>
 </div>
 <script>
@@ -529,6 +541,13 @@ function answer(q,e){add(q,'u');lastQ=q;setTimeout(function(){if(e){add(e.a,'b')
 function open(){panel.hidden=false;btn.setAttribute('aria-expanded','true');if(!started){started=true;add('¡Hola! Soy el asistente de Nexus Cam 👋\nResuelvo tus dudas sobre cámaras, precios e instalación. ¿Qué quieres saber?','b');var nt=document.createElement('div');nt.style.cssText='font-size:12px;color:#6b7279;text-align:center';nt.textContent='Guardamos tus consultas para mejorar la atención.';log.appendChild(nt);quick(MENU)}setTimeout(function(){inp.focus()},50)}
 function close(){panel.hidden=true;btn.setAttribute('aria-expanded','false');btn.focus()}
 btn.addEventListener('click',function(){panel.hidden?open():close()});
+var teaser=document.getElementById('nxTeaser');
+function hideT(){teaser.hidden=true;try{sessionStorage.setItem('nx_teased','1')}catch(e){}}
+var seen=false;try{seen=sessionStorage.getItem('nx_teased')==='1'}catch(e){}
+if(!seen)setTimeout(function(){if(panel.hidden&&!started)teaser.hidden=false},4000);
+teaser.addEventListener('click',function(e){if(e.target.id==='nxTeaserX'){e.stopPropagation();hideT();return}hideT();open()});
+teaser.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();hideT();open()}});
+btn.addEventListener('click',hideT);
 document.getElementById('nxClose').addEventListener('click',close);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!panel.hidden)close()});
 document.getElementById('nxForm').addEventListener('submit',function(e){e.preventDefault();var q=inp.value.trim();if(!q)return;inp.value='';answer(q,find(q))});
