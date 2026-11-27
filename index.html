@@ -254,7 +254,8 @@ details[open] .plus{transform:rotate(45deg)}
 <!-- Card 3 lentes -->
 <article style="flex: 1 1 320px; background: #ffffff; border: 2px solid #22262a; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
 <div style="position: relative; aspect-ratio: 1 / 1; background: #efedea; display: flex; align-items: center; justify-content: center">
-<img src="assets/cam-3-lentes.jpg" alt="Cámara solar de 3 lentes con panel solar" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block">
+<img src="assets/cam-3-lentes.jpg" alt="Cámara solar de 3 lentes con panel solar" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(35%); opacity: .85">
+<span style="position: absolute; top: 14px; left: 14px; background: #c62828; color: #ffffff; font-weight: 800; font-size: 15px; letter-spacing: .06em; padding: 6px 14px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.25)">AGOTADA</span>
 </div>
 <div style="padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 12px; flex: 1">
 <span style="align-self: flex-start; background: #0070e0; color: #ffffff; font-weight: 600; font-size: 14px; padding: 4px 12px; border-radius: 99px">La más completa</span>
@@ -270,11 +271,12 @@ details[open] .plus{transform:rotate(45deg)}
 <li class="spec">Audio bidireccional</li>
 <li class="spec">Grabación local en microSD de hasta 256 GB</li>
 </ul>
-<div style="margin-top: auto; padding-top: 14px; border-top: 1px solid #e4e2de; display: flex; align-items: baseline; justify-content: space-between; gap: 10px">
+<div style="margin-top: auto; background: #fdecea; border: 1px solid #f5c2bd; color: #8e1c1c; border-radius: 10px; padding: 10px 12px; font-size: 15px; font-weight: 600">Agotada temporalmente · Reposición de stock aprox. a mediados de diciembre. Puedes reservarla.</div>
+<div style="padding-top: 14px; border-top: 1px solid #e4e2de; display: flex; align-items: baseline; justify-content: space-between; gap: 10px">
 <b style="font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; white-space: nowrap">$159.900</b>
 <span style="color: #4f565c; font-size: 15px">instalada</span>
 </div>
-<a href="#contacto" data-cam="Cámara solar con chip, 3 lentes" style="display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 10px; background: #22262a; color: #ffffff; font-weight: 700; font-size: 17px; text-decoration: none">Cotizar esta cámara</a>
+<a href="#contacto" data-cam="Cámara solar con chip, 3 lentes" style="display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 10px; background: #22262a; color: #ffffff; font-weight: 700; font-size: 17px; text-decoration: none">Reservar / avisarme cuando llegue</a>
 </div>
 </article>
 
@@ -406,7 +408,7 @@ details[open] .plus{transform:rotate(45deg)}
 <select id="fCam" style="font: 16px Barlow, sans-serif; padding: 12px; min-height: 48px; border-radius: 10px; border: 1px solid #d3d1cc; background: #fbfaf6; color: #1d2124">
 <option value="Cámara solar WiFi">Cámara solar WiFi</option>
 <option value="Cámara solar con chip 4G">Cámara solar con chip 4G</option>
-<option value="Cámara solar con chip, 3 lentes">Cámara solar con chip, 3 lentes</option>
+<option value="Cámara solar con chip, 3 lentes">Cámara solar con chip, 3 lentes (agotada · reposición mediados de diciembre)</option>
 <option value="No sé, necesito asesoría">No sé, necesito asesoría</option>
 </select>
 </label>
@@ -517,8 +519,8 @@ var SB='https://thmxfulfyptlircotuek.supabase.co',SBK='sb_publishable_eEECOmXIRf
 var SID=(function(){try{var k='nx_sid',v=sessionStorage.getItem(k);if(!v){v=Date.now().toString(36)+Math.random().toString(36).slice(2,8);sessionStorage.setItem(k,v)}return v}catch(e){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}})();
 function logMsg(role,msg){try{if(!msg)return;fetch(SB+'/rest/v1/nexuscam_chat_logs',{method:'POST',keepalive:true,headers:{'apikey':SBK,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({session_id:SID,role:role,message:String(msg).slice(0,2000)})}).catch(function(){})}catch(e){}}
 var KB=[
-{id:'precios',label:'Precios',k:['precio','valor','cuanto','cuesta','sale','costo','cobran','barat','caro','$'],a:'Valores con instalación incluida:\n• Cámara solar WiFi: $109.900\n• Cámara solar con chip 4G: $139.900\n• Cámara solar con chip, 3 lentes: $159.900\n\nMemoria microSD opcional (una por cámara): 64 GB $29.900 · 128 GB $34.900.\nEl chip y el plan de datos los aporta el cliente.'},
-{id:'cual',label:'¿Cuál me conviene?',k:['conviene','cual camara','que camara','recomienda','elegir','diferencia','modelo'],a:'Depende del lugar:\n• ¿Hay WiFi que llegue al punto de instalación? → Cámara solar WiFi ($109.900).\n• ¿Sin luz ni internet (potrero, bodega, portón lejano)? → Solar con chip 4G ($139.900).\n• ¿Quieres cubrir mucho terreno con un solo equipo? → Solar 3 lentes ($159.900).\n\nSi me cuentas qué quieres vigilar, Eduardo te asesora por WhatsApp.'},
+{id:'precios',label:'Precios',k:['precio','valor','cuanto','cuesta','sale','costo','cobran','barat','caro','$'],a:'Valores con instalación incluida:\n• Cámara solar WiFi: $109.900\n• Cámara solar con chip 4G: $139.900\n• Cámara solar con chip, 3 lentes: $159.900 (agotada, reposición aprox. a mediados de diciembre; se puede reservar)\n\nMemoria microSD opcional (una por cámara): 64 GB $29.900 · 128 GB $34.900.\nEl chip y el plan de datos los aporta el cliente.'},
+{id:'cual',label:'¿Cuál me conviene?',k:['conviene','cual camara','que camara','recomienda','elegir','diferencia','modelo'],a:'Depende del lugar:\n• ¿Hay WiFi que llegue al punto de instalación? → Cámara solar WiFi ($109.900).\n• ¿Sin luz ni internet (potrero, bodega, portón lejano)? → Solar con chip 4G ($139.900).\n• ¿Quieres cubrir mucho terreno con un solo equipo? → Solar 3 lentes ($159.900), agotada por ahora: reposición aprox. a mediados de diciembre, se puede reservar.\n\nSi me cuentas qué quieres vigilar, Eduardo te asesora por WhatsApp.'},
 {id:'chip',label:'Chip y plan de datos',k:['chip','plan','datos','entel','movistar','claro','wom','sim','megas','gigas'],a:'El chip y el plan de datos los aporta el cliente. Funciona con Entel, Movistar, Claro o WOM.\nAntes de instalar medimos qué compañía tiene mejor señal 4G en tu terreno, para que contrates la adecuada.'},
 {id:'senal',label:'¿Qué señal llega?',k:['senal','cobertura','4g','que compania','cual compania','mejor compania','llega mejor','agarra','capta','internet movil'],a:'La señal 4G cambia mucho de un sector a otro, sobre todo en el campo, así que no la adivinamos: antes de instalar medimos en tu terreno qué compañía llega mejor (Entel, Movistar, Claro o WOM), y con eso contratas el chip.\n\nSi quieres adelantarte: revisa el mapa de cobertura en la página de cada compañía, o prueba con celulares de distintas compañías justo donde iría la cámara.\n\nSi no hay nada de señal, la cámara con chip no sirve y te lo decimos antes de vender.'},
 {id:'zona',label:'¿Dónde instalan?',k:['donde','zona','comuna','region','biobio','concepcion','arauco','los angeles','lebu','canete','contulmo','instalan en','llegan','sector'],a:'Instalamos en la Región del Biobío (provincias de Concepción, Arauco y Biobío) y comunas cercanas. Si estás más lejos, escríbenos y vemos disponibilidad.'},
